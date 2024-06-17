@@ -23,18 +23,30 @@ import matplotlib.pyplot as plt
 ise_data = fetch_ucirepo(id=247) 
 
 
-print(type(ise_data))
+# check the type of dataset    
+print("dataset type: ", type(ise_data), "\n")
 
-
+# print the keys in dataset
 print("keys: ", ise_data.keys(), "\n")
 
+# fetch the stock data from the dataset
 data_info = ise_data.data['features']
-print(type(data_info))
+print("data type: ", type(data_info), "\n")
 
 print("print first 5 rows..!")
-print(data_info.head())
+print(data_info.head(), "\n")
 
 print("\n","Data Columns: ", data_info.columns)
+
+print("varibles data :")
+print(ise_data.variables)
+
+
+# set index for the plot
+data_info.set_index('date', inplace=True)
+
+monthly_ftse = data_info['FTSE'].resample('M').mean()
+
 
 plt.figure(figsize=(12, 6))
 plt.plot(data_info['date'], data_info['SP'], marker='o', linestyle='-', color='b', label='ISE')
@@ -46,4 +58,7 @@ plt.legend()
 plt.grid(True)
 plt.tight_layout()
 plt.show()
+
+
+
 # print(istanbul_stock_exchange)
