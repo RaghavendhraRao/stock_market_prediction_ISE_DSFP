@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Jun 16 23:30:47 2024
+Created on Wed Jun  5 11:03:02 2024
 
-@author: Raghavendhra
+@author: Raghavendhra Devineni
 """
-
 
 '''
 Installing packages
@@ -17,6 +16,7 @@ Install the ucimlrepo package
 
 from ucimlrepo import fetch_ucirepo 
 import matplotlib.pyplot as plt
+import pandas as pd
   
 # # fetch dataset 
 # istanbul_stock_exchange = fetch_ucirepo(id=247) 
@@ -36,29 +36,51 @@ print("data type: ", type(data_info), "\n")
 print("print first 5 rows..!")
 print(data_info.head(), "\n")
 
-print("\n","Data Columns: ", data_info.columns)
+stock_data = data_info
+print(stock_data.head())
 
-print("varibles data :")
+# printing the summary statistics
+# Descriptive statistics include those that summarize the central tendency, dispersion, and shape of a dataset’s distribution, excluding NaN values
+print(stock_data.describe())
+
+
+# information about the dataset
+print(stock_data.info())
+
+# print("\n","Data Columns: ", data_info.columns)
+
+# print("varibles data :")
 print(ise_data.variables)
 
 
-# set index for the plot
-data_info.set_index('date', inplace=True)
+# convert the date datatpe to datetime
+print(stock_data['date'].head())
 
-monthly_ftse = data_info['FTSE'].resample('M').mean()
+stock_data['date'] = pd.to_datetime(stock_data['date'], format='%d-%b-%y')
+print(stock_data['date'].head())
+print(stock_data.dtypes)
 
+# set the date column as Index
+stock_data.set_index('date', inplace=True)
 
-plt.figure(figsize=(12, 6))
-plt.plot(data_info['date'], data_info['SP'], marker='o', linestyle='-', color='b', label='ISE')
-plt.xticks(rotation='vertical')
-plt.xlabel('Date')
-plt.ylabel('SP')
-plt.title('ISE Over Time')
-plt.legend()
-plt.grid(True)
-plt.tight_layout()
+#print few rows
+print(stock_data.head())
+
+# check for null values in the dataset
+data_null_values = stock_data.isnull().sum()
+print("null values found in dataset: ", data_null_values)
+
+# calculating the mean of each month and restructure the data
+stock_data_mean = stock_data.resample('M').mean()
+print(stock_data_mean.head())
+
+# Plot each column
+fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(15, 10), constrained_layout=True)
+data_columns = stock_data.columns
+for col, ax in enumerate(axes.flat):
+    if col < len(data_columns):
+        stock_data_mean[data_columns[col]].plot(ax=ax)
+        ax.set_title(data_columns[col])
+        
 plt.show()
 
-
-
-# print(istanbul_stock_exchange)
