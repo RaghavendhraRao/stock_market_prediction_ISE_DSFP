@@ -17,6 +17,7 @@ Install the ucimlrepo package
 from ucimlrepo import fetch_ucirepo 
 import matplotlib.pyplot as plt
 import pandas as pd
+from sklearn.model_selection import train_test_split
   
 # # fetch dataset 
 # istanbul_stock_exchange = fetch_ucirepo(id=247) 
@@ -72,7 +73,11 @@ print("null values found in dataset: ", data_null_values, "/n")
 
 # calculating the mean of each month and restructure the data
 stock_mean_data = stock_data.resample('M').mean()
-print(stock_mean_data.head())
+print(stock_mean_data.head(), "/n")
+
+# removing the duplicates in the columns
+stock_mean_data = stock_mean_data.loc[:, ~stock_mean_data.columns.duplicated()]
+print(stock_mean_data.head(), "/n")
 
 # Plot each column
 fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(15, 10), constrained_layout=True)
@@ -87,9 +92,14 @@ for col, ax in enumerate(axes.flat):
 plt.show()
 
 
-# split data into training and testing using Time-Based split(year, months, days)
-stock_train_data = stock_mean_data['2009': '2010-02']
-stock_test_data = stock_mean_data['2010-03':]
+# # split data into training and testing using Time-Based split(year, months, days)
+# stock_train_data = stock_mean_data['2009': '2010-02']
+# stock_test_data = stock_mean_data['2010-03':]
 
+X_stock_key_features = ['SP', 'DAX', 'FTSE', 'NIKKEI', 'BOVESPA', 'EU', 'EM']
+Y_stock_target = ['ISE']
 
+# split data into training and testing sets
+x_train, x_test, y_train, y_test = train_test_split(X_stock_key_features, Y_stock_target,
+                                                    test_size=0.7, random_state=42)
 
