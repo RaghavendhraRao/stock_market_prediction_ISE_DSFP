@@ -100,6 +100,7 @@ X_stock_key_features = ['SP', 'DAX', 'FTSE', 'NIKKEI', 'BOVESPA', 'EU', 'EM']
 Y_stock_target = ['ISE']
 
 # split data into training and testing sets
-x_train, x_test, y_train, y_test = train_test_split(X_stock_key_features, Y_stock_target,
+x_train, x_test, y_train, y_test = train_test_split(stock_mean_data[X_stock_key_features], stock_mean_data[Y_stock_target],
                                                     test_size=0.7, random_state=42)
+
 
