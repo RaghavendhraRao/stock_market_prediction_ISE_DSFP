@@ -10,7 +10,7 @@ Installing packages
 
 Install the ucimlrepo package
     pip install ucimlrepo
-    
+    pytohn version: 3.9.13
 
 '''
 
@@ -18,7 +18,12 @@ from ucimlrepo import fetch_ucirepo
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split
-  
+from sklearn.preprocessing import MinMaxScaler
+import numpy as np
+from keras.models import Sequential
+from keras.layers import LSTM, Dense, Dropout
+
+
 # # fetch dataset 
 # istanbul_stock_exchange = fetch_ucirepo(id=247) 
 ise_data = fetch_ucirepo(id=247) 
@@ -99,8 +104,29 @@ plt.show()
 X_stock_key_features = ['SP', 'DAX', 'FTSE', 'NIKKEI', 'BOVESPA', 'EU', 'EM']
 Y_stock_target = ['ISE']
 
+
+
+# normalize the data
+scaler_data =MinMaxScaler(feature_range=(0,1))
+normalized_data = scaler_data.fit_transform(stock_mean_data[X_stock_key_features + Y_stock_target])
+
+# split the data into features and target
+X_data = normalized_data[:, :-1]
+Y_data = normalized_data[:, -1]
+
+
+#Reshape the input data into 3D array/shape for LSTM
+allow_timestep =1
+X_data = np.reshape(X_data, (X_data.shape[0], allow_timestep, X_data.shape[1]))
+
+
 # split data into training and testing sets
-x_train, x_test, y_train, y_test = train_test_split(stock_mean_data[X_stock_key_features], stock_mean_data[Y_stock_target],
+x_train, x_test, y_train, y_test = train_test_split(X_data, Y_data,
                                                     test_size=0.7, random_state=42)
 
-
+# Build the LSTM model from scratch
+model = Sequential()
+model.add(LSTM(units=50, return_sequences=True, input_shape=(x_train.shape[1], x_train.shape[2]))) #layer 1 with 50 units
+model.add(Dropout(0.1)) # prevent overfitting
+model.add(LSTM(units=50)) # layer 2 with 50 units
+model.add(Dense(1)) # predicting only single values index(ISE)
