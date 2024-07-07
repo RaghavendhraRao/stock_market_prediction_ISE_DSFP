@@ -24,6 +24,11 @@ from keras.models import Sequential
 from keras.layers import LSTM, Dense, Dropout
 
 
+# different numerical results due to floating-point round-off errors from different computation orders.
+# To turn them off, set
+TF_ENABLE_ONEDNN_OPTS=0
+
+
 # # fetch dataset 
 # istanbul_stock_exchange = fetch_ucirepo(id=247) 
 ise_data = fetch_ucirepo(id=247) 
@@ -84,17 +89,17 @@ print(stock_mean_data.head(), "/n")
 stock_mean_data = stock_mean_data.loc[:, ~stock_mean_data.columns.duplicated()]
 print(stock_mean_data.head(), "/n")
 
-# Plot each column
-fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(15, 10), constrained_layout=True)
-data_columns = stock_mean_data.columns
-for col, ax in enumerate(axes.flat):
-    if col < len(data_columns):
-        stock_mean_data[data_columns[col]].plot(ax=ax)
-        ax.set_title(data_columns[col])
-        ax.set_xlabel('year')
-        ax.set_ylabel('price in mean')
+# # Plot each column
+# fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(15, 10), constrained_layout=True)
+# data_columns = stock_mean_data.columns
+# for col, ax in enumerate(axes.flat):
+#     if col < len(data_columns):
+#         stock_mean_data[data_columns[col]].plot(ax=ax)
+#         ax.set_title(data_columns[col])
+#         ax.set_xlabel('year')
+#         ax.set_ylabel('price in mean')
         
-plt.show()
+# plt.show()
 
 
 # # split data into training and testing using Time-Based split(year, months, days)
@@ -130,3 +135,35 @@ model.add(LSTM(units=50, return_sequences=True, input_shape=(x_train.shape[1], x
 model.add(Dropout(0.1)) # prevent overfitting
 model.add(LSTM(units=50)) # layer 2 with 50 units
 model.add(Dense(1)) # predicting only single values index(ISE)
+model.compile(loss='mean_squared_error',
+              optimizer='adam',
+              metrics=['mean_absolute_error']) # compiling the model
+model.summary() # model summary
+
+# train the model
+history = model.fit(x_train, y_train, epochs=50, batch_size=32, validation_split=0.2)
+
+#Access the training data 
+training_hist = history.history
+
+
+# evaluate model
+train_loss, train_mean_absolute_error = model.evaluate(x_test, y_test)
+print("\n \n")
+print(f'Mean absolute error: {train_mean_absolute_error}')
+
+#predict the model on test dataset
+y_pred= model.predict(x_test)
+
+# visualize the training history
+training_loss = training_hist['loss']
+training_val_loss = training_hist['val_loss']
+
+training_epochs = range(1, len(training_loss)+1)
+
+plt.plot(training_epochs, training_loss, 'bo', label='loss')
+plt.plot(training_epochs, training_val_loss, 'b', label='val_loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+plt.show()
