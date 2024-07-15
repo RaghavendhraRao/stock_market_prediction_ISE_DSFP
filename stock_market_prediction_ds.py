@@ -89,17 +89,17 @@ print(stock_mean_data.head(), "/n")
 stock_mean_data = stock_mean_data.loc[:, ~stock_mean_data.columns.duplicated()]
 print(stock_mean_data.head(), "/n")
 
-# # Plot each column
-# fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(15, 10), constrained_layout=True)
-# data_columns = stock_mean_data.columns
-# for col, ax in enumerate(axes.flat):
-#     if col < len(data_columns):
-#         stock_mean_data[data_columns[col]].plot(ax=ax)
-#         ax.set_title(data_columns[col])
-#         ax.set_xlabel('year')
-#         ax.set_ylabel('price in mean')
+# Plot each column
+fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(15, 10), constrained_layout=True)
+data_columns = stock_mean_data.columns
+for col, ax in enumerate(axes.flat):
+    if col < len(data_columns):
+        stock_mean_data[data_columns[col]].plot(ax=ax)
+        ax.set_title(data_columns[col])
+        ax.set_xlabel('year')
+        ax.set_ylabel('price in mean')
         
-# plt.show()
+plt.show()
 
 
 # # split data into training and testing using Time-Based split(year, months, days)
@@ -132,11 +132,11 @@ x_train, x_test, y_train, y_test = train_test_split(X_data, Y_data,
 # Build the LSTM model from scratch
 model = Sequential()
 model.add(LSTM(units=50, return_sequences=True, input_shape=(x_train.shape[1], x_train.shape[2]))) #layer 1 with 50 units
-model.add(Dropout(0.1)) # prevent overfitting
-model.add(LSTM(units=50)) # layer 2 with 50 units
-model.add(Dense(1)) # predicting only single values index(ISE)
-model.compile(loss='mean_squared_error',
-              optimizer='adam',
+model.add(Dropout(0.1)) # prevent overfitting given 10% loss for every epoch
+model.add(LSTM(units=50)) # layer 2 with 50 units will only return the last output seq
+model.add(Dense(1)) # predicting only single values index(ISE) (pridict single continuous value)
+model.compile(loss='mean_squared_error', #calculate the error (pred & act)
+              optimizer='adam', #minimize the loss function.
               metrics=['mean_absolute_error']) # compiling the model
 model.summary() # model summary
 
