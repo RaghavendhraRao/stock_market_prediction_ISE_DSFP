@@ -90,16 +90,16 @@ stock_mean_data = stock_mean_data.loc[:, ~stock_mean_data.columns.duplicated()]
 print(stock_mean_data.head(), "/n")
 
 # Plot each column
-fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(15, 10), constrained_layout=True)
-data_columns = stock_mean_data.columns
-for col, ax in enumerate(axes.flat):
-    if col < len(data_columns):
-        stock_mean_data[data_columns[col]].plot(ax=ax)
-        ax.set_title(data_columns[col])
-        ax.set_xlabel('year')
-        ax.set_ylabel('price in mean')
+# fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(15, 10), constrained_layout=True)
+# data_columns = stock_mean_data.columns
+# for col, ax in enumerate(axes.flat):
+#     if col < len(data_columns):
+#         stock_mean_data[data_columns[col]].plot(ax=ax)
+#         ax.set_title(data_columns[col])
+#         ax.set_xlabel('year')
+#         ax.set_ylabel('price in mean')
         
-plt.show()
+# plt.show()
 
 
 # # split data into training and testing using Time-Based split(year, months, days)
