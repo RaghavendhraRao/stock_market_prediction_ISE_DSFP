@@ -411,3 +411,78 @@ plt.xlabel('')
 plt.ylabel('')
 plt.legend()
 plt.show()
+
+
+
+## Implementing ARIMA model
+
+# !pip install pmdarima
+
+from pmdarima import auto_arima
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+
+
+# normalize the featured stock data
+norm_x_train, norm_x_test, norm_y_train, norm_y_test = normalize_data(x_train, x_test, y_train, y_test)
+
+print(norm_x_train.shape)
+print(norm_y_train.shape)
+print(norm_x_test.shape)
+print(norm_y_test.shape)
+
+# convert the norm_y_train and norm_y_test to 1D array through flatten
+norm_y_train_flat = norm_y_train.flatten()
+norm_y_test_flat = norm_y_test.flatten()
+
+print(norm_y_train_flat.shape)
+print(norm_y_test_flat.shape)
+
+# Build ARIMA model,
+# Find the best order for AR(P), I(q), M(d) parameters using auto_arima,
+# set the seasonality = True, to get the best sasonality order.
+
+arima_auto_model = auto_arima(norm_y_train_flat, exogenous=norm_x_train, seasonal=False,
+                              trace=True, error_action='ignore',
+                              suppress_warnings=True, stepwise=True)
+
+
+# Identify the best order through auto_arima
+arima_best_order = arima_auto_model.order
+arima_best_order
+
+# Use the SARIMAX model using the optimal order to train 
+# SARIMAX use both features and target for training the data unlike ARIMA it accepts only target data
+arima_model = SARIMAX(norm_y_train_flat, exog=norm_x_train, order=arima_best_order)
+arima_model = arima_model.fit(disp=False)
+
+# summarize the arima_model
+arima_model.summary()
+
+# use the model to predict on the training data
+armia_predict = arima_model.predict(start=0, end=len(norm_y_train_flat)-1,
+                                    exog=norm_x_train)
+armia_predict.shape
+
+# Forecast the model on the test data (target)
+arima_forecast = arima_model.forecast(steps=len(norm_y_test_flat), exog=norm_x_test)
+arima_forecast.shape
+
+# visualize the data
+plt.figure(figsize=(10,6))
+plt.plot(norm_y_train_flat, label='Training data', color='g')
+plt.plot(armia_predict, label='Predicted data', color='red')
+fore_start_index = len(norm_y_train_flat) + np.arange(len(arima_forecast))
+plt.plot(fore_start_index, arima_forecast, label='Forecast data', color='black')
+plt.title('')
+plt.xlabel('')
+plt.ylabel('')
+plt.legend()
+plt.show()
+
+lstm_mae, lstm_mape, lstm_mse, lstm_rmse = calculate_error_rate(norm_y_test, arima_forecast)
+
+# print the mena values
+print(f"Mean absolute error: {lstm_mae} ")
+print(f"Mean absolute percentage Error: {lstm_mape} ")
+print(f"Mean squared Error: {lstm_mse} ")
+print(f"Root mean square error: {lstm_rmse} ")
