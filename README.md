@@ -1,10 +1,20 @@
-**Comparative Study of Stock Market Forecasting Using Time Series Models**
-Data Science final year project on "Stock market prediction using Istanbul stock exchange (ISE) dataset from UCl dataset repository.
+****Comparative Study of Stock Market Forecasting Using Time Series Models****
+
 
 **Description:**
+Data Science final year project on "Stock market prediction using Istanbul stock exchange (ISE) dataset from UCl dataset repository.
+
 This project involves a comparative analysis of stock market forecasting using three different time series models: Long Short-Term Memory (LSTM), AutoRegressive Integrated Moving Average (ARIMA), and Facebook's Prophet. The analysis is conducted using the Istanbul Stock Market dataset, which contains financial indicators from various international markets. The goal of this project is to predict the Istanbul Stock Exchange (ISE) index and compare the performance of the models using various evaluation metrics.
 
 The dataset consists of 7 columns: ISE, SP, DAX, FTSE, NIKKEI, BOVESPA, EU, and EM, where ISE is the target variable. The data is preprocessed and normalized before being fed into the models. The dataset is split into 80% for training and 20% for testing, and the models are evaluated using Mean Absolute Error (MAE), Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and R-squared (R²) metrics.
+
+Code File:
+Avaliable in both .ipynb (using colab) and .py(using python file)
+File name:
+Using Colab: ds_final_proj_stock_market_colab.ipynb
+Python file: stock_market_prediction_ds.py
+
+Before running this code, Install the below python packages and run the code.
 
 ## Installation
 
