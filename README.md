@@ -8,11 +8,12 @@ This project involves a comparative analysis of stock market forecasting using t
 
 The dataset consists of 7 columns: ISE, SP, DAX, FTSE, NIKKEI, BOVESPA, EU, and EM, where ISE is the target variable. The data is preprocessed and normalized before being fed into the models. The dataset is split into 80% for training and 20% for testing, and the models are evaluated using Mean Absolute Error (MAE), Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and R-squared (R²) metrics.
 
-Code File:
+**Code File:**
 Avaliable in both .ipynb (using colab) and .py(using python file)
-File name:
-Using Colab: ds_final_proj_stock_market_colab.ipynb
-Python file: stock_market_prediction_ds.py
+**File name:**
+**Using Colab:** ds_final_proj_stock_market_colab.ipynb
+
+**Python file:** stock_market_prediction_ds.py
 
 Before running this code, Install the below python packages and run the code.
 
